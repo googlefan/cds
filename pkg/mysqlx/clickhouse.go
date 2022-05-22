@@ -21,7 +21,7 @@ func ToClickhouseTable(dsn, db, table, indexes string, withTime bool) ([]string,
 		if c.Key == "PRI" {
 			pri = c.Field
 		}
-		if c.Field == "create_time" || c.Field == "createTime" {
+		if c.Field == "create_time" || c.Field == "createTime" || c.Field == "createdDate" {
 			createTime = c.Field
 		}
 		if c.Field == "update_time" || c.Field == "updateTime" || c.Field == "insert_id" {
@@ -30,7 +30,7 @@ func ToClickhouseTable(dsn, db, table, indexes string, withTime bool) ([]string,
 		// type converter
 		columns[i].Type = toClickhouseType(c.Type)
 		// 如果字段类型可以为null 则添加 Nullable,否则同步mysql回报nil异常
-		if c.Null == "YES" {
+		if c.Null == "YES" && c.Field != "createdDate" {
 			columns[i].Type = "Nullable(" + columns[i].Type + ")"
 		}
 		newColumns = append(newColumns, table2.Column{

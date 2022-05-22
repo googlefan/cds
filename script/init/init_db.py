@@ -35,7 +35,7 @@ def init_mysql():
     for i in range(1, 100001):
         result.append(
                 (
-                    random.random(), 
+                    random.random(),
                     "".join(random.choices(string.ascii_letters+string.digits, k=30)),
                     datetime.datetime.now()
                     )
@@ -59,7 +59,7 @@ def init_mongo():
         result.append(
                 {
                     "float": random.random(), 
-                    "string":"".join(random.choices(string.ascii_letters+string.digits, k=30)),
+                    "string": "".join(random.choices(string.ascii_letters+string.digits, k=30)),
                     "dt": datetime.datetime.now()
                     }
                 )

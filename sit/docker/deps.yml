@@ -104,96 +104,97 @@ services:
           condition: service_healthy
         zookeeper:
           condition: service_healthy
-  ch-server-2:
-    image: yandex/clickhouse-server
-    container_name: ch-server-2
-    volumes:
-      - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/local.xml
-      - ./clickhouse/macros2.xml:/etc/clickhouse-server/config.d/macros.xml
-    ports:
-      - 8124:8123
-      - 9001:9000
-    environment:
-      TZ: "Asia/Shanghai"
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      etcd:
-        condition: service_healthy
-      zookeeper:
-        condition: service_healthy
-  ch-server-3:
-    image: yandex/clickhouse-server
-    container_name: ch-server-3
-    volumes:
-      - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/local.xml
-      - ./clickhouse/macros3.xml:/etc/clickhouse-server/config.d/macros.xml
-    ports:
-      - 8125:8123
-      - 9002:9000
-    environment:
-      TZ: "Asia/Shanghai"
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      etcd:
-        condition: service_healthy
-      zookeeper:
-        condition: service_healthy
-  ch-server-4:
-    image: yandex/clickhouse-server
-    container_name: ch-server-4
-    volumes:
-      - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/local.xml
-      - ./clickhouse/macros4.xml:/etc/clickhouse-server/config.d/macros.xml
-    ports:
-      - 8126:8123
-      - 9003:9000
-    environment:
-      TZ: "Asia/Shanghai"
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      etcd:
-        condition: service_healthy
-      zookeeper:
-        condition: service_healthy
-  mongo1:
-    image: mongo:4.4
-    container_name: mongo1
-    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30001"]
-    # volumes:
-      # - ./data/mongo-1:/data/db
-    ports:
-      - 27017:30001
-    healthcheck:
-      test: test $$(echo "rs.initiate({_id:'my-replica-set',members:[{_id:0,host:\"mongo1:30001\"},{_id:1,host:\"mongo2:30002\"},{_id:2,host:\"mongo3:30003\"}]}).ok || rs.status().ok" | mongo --port 30001 --quiet) -eq 1
-      interval: 10s
-      start_period: 30s
+#  ch-server-2:
+#    image: yandex/clickhouse-server
+#    container_name: ch-server-2
+#    volumes:
+#      - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/local.xml
+#      - ./clickhouse/macros2.xml:/etc/clickhouse-server/config.d/macros.xml
+#    ports:
+#      - 8124:8123
+#      - 9001:9000
+#    environment:
+#      TZ: "Asia/Shanghai"
+#    depends_on:
+#      mysql:
+#        condition: service_healthy
+#      redis:
+#        condition: service_healthy
+#      etcd:
+#        condition: service_healthy
+#      zookeeper:
+#        condition: service_healthy
+#  ch-server-3:
+#    image: yandex/clickhouse-server
+#    container_name: ch-server-3
+#    volumes:
+#      - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/local.xml
+#      - ./clickhouse/macros3.xml:/etc/clickhouse-server/config.d/macros.xml
+#    ports:
+#      - 8125:8123
+#      - 9002:9000
+#    environment:
+#      TZ: "Asia/Shanghai"
+#    depends_on:
+#      mysql:
+#        condition: service_healthy
+#      redis:
+#        condition: service_healthy
+#      etcd:
+#        condition: service_healthy
+#      zookeeper:
+#        condition: service_healthy
+#  ch-server-4:
+#    image: yandex/clickhouse-server
+#    container_name: ch-server-4
+#    volumes:
+#      - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/local.xml
+#      - ./clickhouse/macros4.xml:/etc/clickhouse-server/config.d/macros.xml
+#    ports:
+#      - 8126:8123
+#      - 9003:9000
+#    environment:
+#      TZ: "Asia/Shanghai"
+#    depends_on:
+#      mysql:
+#        condition: service_healthy
+#      redis:
+#        condition: service_healthy
+#      etcd:
+#        condition: service_healthy
+#      zookeeper:
+#        condition: service_healthy
+#  mongo1:
+#    image: mongo:4.4
+#    container_name: mongo1
+#    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30001"]
+#    # volumes:
+#      # - ./data/mongo-1:/data/db
+#    ports:
+#      - "30001:30001"
+#    healthcheck:
+##      test: ["CMD", "ps -ef | grep 30001"]
+#      test: test $$(echo "rs.initiate({_id:'my-replica-set',members:[{_id:0,host:\"mongo1:30001\"},{_id:1,host:\"mongo2:30002\"},{_id:2,host:\"mongo3:30003\"}]}).ok || rs.status().ok" | mongo --port 30001 --quiet) -eq 1
+#      interval: 40s
+#      start_period: 60s
 
-  mongo2:
-    image: mongo:4.4
-    container_name: mongo2
-    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30002"]
-    # volumes:
-      # - ./data/mongo-2:/data/db
-    ports:
-      - 30002:30002
+#  mongo2:
+#    image: mongo:4.4
+#    container_name: mongo2
+#    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30002"]
+#    # volumes:
+#      # - ./data/mongo-2:/data/db
+#    ports:
+#      - "30002:30002"
 
-  mongo3:
-    image: mongo:4.4
-    container_name: mongo3
-    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30003"]
-    # volumes:
-      # - ./data/mongo-3:/data/db
-    ports:
-      - 30003:30003
+#  mongo3:
+#    image: mongo:4.4
+#    container_name: mongo3
+#    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30003"]
+#    # volumes:
+#      # - ./data/mongo-3:/data/db
+#    ports:
+#      - "30003:30003"
   kafka:
     image: wurstmeister/kafka
     restart: always
@@ -215,7 +216,7 @@ services:
     image: liliankasem/kafka-connect:1.1.0
     container_name: kafka-connector
     hostname: connect
-    container_name: connect
+#    container_name: connect
     restart: always
     ports:
       - "8083:8083"

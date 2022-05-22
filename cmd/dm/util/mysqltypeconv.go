@@ -16,12 +16,12 @@ type (
 		mysqlConn *sql.DB
 	}
 	MysqlDesc struct {
-		Field   string `db:"Field"`
-		Type    string `db:"Type"`
-		Null    string `db:"Null"`
-		Key     string `db:"Key"`
-		Default string `db:"Default"`
-		Extra   string `db:"Extra"`
+		Field   string         `db:"Field"`
+		Type    string         `db:"Type"`
+		Null    string         `db:"Null"`
+		Key     string         `db:"Key"`
+		Default sql.NullString `db:"Default"`
+		Extra   string         `db:"Extra"`
 	}
 	DataType int
 )

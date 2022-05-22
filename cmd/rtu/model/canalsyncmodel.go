@@ -3,7 +3,6 @@ package model
 import (
 	originJson "encoding/json"
 	"strconv"
-	"time"
 	"unsafe"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -117,8 +116,9 @@ func (mysql *CanalMysql) setValueMap(vm ValueMap, table *SQLTable, isDelete bool
 					t := FormatDate(val)
 					vm[k] = &t
 				} else {
-					tmp := NullValMap[DataTypeTime].(time.Time)
-					vm[k] = &tmp
+					//tmp := NullValMap[DataTypeTime].(time.Time)
+					//vm[k] = &tmp
+					vm[k] = nil
 				}
 			case DataTypeInt:
 				switch val := v.(type) {

@@ -21,10 +21,14 @@ const (
 
 // NullValMap 记录该类型的默认值
 var NullValMap = map[DataType]interface{}{
-	DataTypeString: "",
-	DataTypeInt:    0,
-	DataTypeFloat:  0.0,
-	DataTypeTime:   time.Unix(0, 0),
+	//DataTypeString: "",
+	//DataTypeInt:    0,
+	//DataTypeFloat:  0.0,
+	//DataTypeTime:   time.Unix(0, 0),
+	DataTypeString: nil,
+	DataTypeInt:    nil,
+	DataTypeFloat:  nil,
+	DataTypeTime:   nil,
 }
 
 // ParseTypeByMysqlType 将MySQL的数据类型转换为Go语言内部转换用的DataType

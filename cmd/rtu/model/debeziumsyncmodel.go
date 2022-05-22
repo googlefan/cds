@@ -242,7 +242,8 @@ func (mysql *DebeziumMySQL) setValueMap(vm ValueMap, table *SQLTable, isDelete b
 				if val, ok := v.(string); ok {
 					t, err := time.Parse(MySQLTimeLayout, val)
 					if err != nil {
-						t = NullValMap[DataTypeTime].(time.Time)
+						//t = NullValMap[DataTypeTime].(time.Time)
+						vm[k] = nil
 					}
 					vm[k] = t
 
@@ -255,7 +256,8 @@ func (mysql *DebeziumMySQL) setValueMap(vm ValueMap, table *SQLTable, isDelete b
 					i, err := strconv.Atoi(v)
 					if err != nil {
 						logx.Error(err)
-						vm[k] = 0
+						//vm[k] = 0
+						vm[k] = nil
 					} else {
 						vm[k] = i
 					}
