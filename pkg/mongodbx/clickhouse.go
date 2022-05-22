@@ -69,22 +69,22 @@ func ToClickhouseTable(dsn, db, tablename, indexes string, withTime bool) ([]str
 	out := make([]string, 0, 8)
 
 	// megreTree table
-	out = append(out, data.CreateTable(table2.MTLocal, true))
+	//out = append(out, data.CreateTable(table2.MTLocal, true))
 	// distrubuted table for query node
-	out = append(out, data.CreateTable(table2.Distribute, false))
-	// distributed table for data node
-	out = append(out, data.CreateTable(table2.Distribute, true))
-
-	// mv inner table
-	out = append(out, data.CreateTable(table2.MvInner, true))
-
+	//out = append(out, data.CreateTable(table2.Distribute, false))
+	//// distributed table for data node
+	//out = append(out, data.CreateTable(table2.Distribute, true))
 	//
-	out = append(out, data.CreateTable(table2.MvLocal, true))
-	out = append(out, data.CreateTable(table2.MvDistribute, true))
-	out = append(out, data.CreateTable(table2.MvDistribute, false))
-	out = append(out, data.CreateTable(table2.MvNow, false))
-	out = append(out, data.CreateTable(table2.MvNow, true))
-
+	//// mv inner table
+	//out = append(out, data.CreateTable(table2.MvInner, true))
+	//
+	////
+	//out = append(out, data.CreateTable(table2.MvLocal, true))
+	//out = append(out, data.CreateTable(table2.MvDistribute, true))
+	//out = append(out, data.CreateTable(table2.MvDistribute, false))
+	//out = append(out, data.CreateTable(table2.MvNow, false))
+	//out = append(out, data.CreateTable(table2.MvNow, true))
+	out = append(out, data.CreateTable(table2.MyTable, false))
 	return out, data.QueryKey, nil
 }
 

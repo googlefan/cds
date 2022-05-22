@@ -12,6 +12,7 @@ const (
 	MvInner
 	MvDistribute
 	MvNow
+	MyTable
 )
 
 type Column struct {
@@ -35,7 +36,7 @@ type TableMeta struct {
 
 func (meta *TableMeta) buildColumn() string {
 	var buf strings.Builder
-	buf.Write([]byte("`insert_id` UInt64 COMMENT '插入id unix timestamp nano second',\n"))
+	//buf.Write([]byte("`insert_id` UInt64 COMMENT '插入id unix timestamp nano second',\n")) 去除insert_id
 	for _, column := range meta.Columns {
 		buf.WriteString("`" + column.Name + "` " + column.Type)
 		if len(column.Comment) > 0 {
@@ -49,9 +50,9 @@ func (meta *TableMeta) buildColumn() string {
 	if meta.WithTime {
 		buf.Write([]byte("`__time` DateTime COMMENT '第三方时间戳',\n"))
 	}
-	buf.Write([]byte("`ck_is_delete` UInt8 COMMENT '用于记录删除状态 0为正常状态 1为删除状态'"))
-
-	return buf.String()
+	//buf.Write([]byte("`ck_is_delete` UInt8 COMMENT '用于记录删除状态 0为正常状态 1为删除状态'")) 去除ck_is_delete
+	//return buf.String()
+	return strings.TrimSuffix(buf.String(), ",\n")
 }
 
 func (meta *TableMeta) CreateTable(category int, distribute bool) string {
@@ -95,6 +96,9 @@ func (meta *TableMeta) buildHead(category int, buf *strings.Builder) {
 	case MvNow:
 		buf.WriteString("VIEW IF NOT EXISTS ")
 		buf.WriteString(dbTable + "_now` ")
+	case MyTable:
+		buf.WriteString("TABLE IF NOT EXISTS ")
+		buf.WriteString(dbTable + "` ")
 	}
 }
 
@@ -145,5 +149,11 @@ func (meta *TableMeta) buildEnd(category int, buf *strings.Builder) {
 		buf.WriteString("SELECT * FROM " + dbTable)
 		buf.WriteString("_all")
 		buf.WriteString(" FINAL WHERE ck_is_delete = 0")
+	case MyTable:
+		buf.WriteString(
+			`ENGINE = ReplacingMergeTree(` + partitionKey + `)
+		` + partitionString + `
+		ORDER BY (` + meta.QueryKey + `)
+		SETTINGS index_granularity = 8192`)
 	}
 }
