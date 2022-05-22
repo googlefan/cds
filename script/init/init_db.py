@@ -71,5 +71,5 @@ def init_mongo():
 
 if __name__ == "__main__":
     init_mysql()
-    init_mongo()
+    # init_mongo()
     
