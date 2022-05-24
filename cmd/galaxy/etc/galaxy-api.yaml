@@ -9,10 +9,10 @@ Timeout: 10000
 EtcdConfig:
   - etcd:2379
 Mysql: root:root@tcp(mysql:3306)/galaxy?parseTime=true&loc=Local
-HeraCk: tcp://127.0.0.1:9000?username=default&password=
+HeraCk: tcp://139.224.189.73:9000?username=default&password=default
 CkDataNodes:
-  - tcp://ch-server-1:9000?username=default&password=
-  - tcp://ch-server-1:9000?username=default&password=
+  - tcp://139.224.189.73:9000?username=default&password=default
+  - tcp://139.224.189.73:9000?username=default&password=default
 #  - tcp://ch-server-1:9000?username=default&password=,tcp://ch-server-2:9000?username=default&password=
 #  - tcp://ch-server-3:9000?username=default&password=,tcp://ch-server-4:9000?username=default&password=
 Debezium: kafka-connector:8083
