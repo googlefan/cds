@@ -84,26 +84,26 @@ services:
       # - ZOO_4LW_COMMANDS_WHITELIST
       # - ZOO_ADMINSERVER_ENABLED
 
-#  ch-server-1:
-#      image: yandex/clickhouse-server
-#      container_name: ch-server-1
-#      volumes:
-#        - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/local.xml
-#        - ./clickhouse/macros1.xml:/etc/clickhouse-server/config.d/macros.xml
-#      ports:
-#        - 8123:8123
-#        - 9000:9000
-#      environment:
-#        TZ: "Asia/Shanghai"
-#      depends_on:
-#        mysql:
-#          condition: service_healthy
-#        redis:
-#          condition: service_healthy
-#        etcd:
-#          condition: service_healthy
-#        zookeeper:
-#          condition: service_healthy
+  ch-server-1:
+      image: yandex/clickhouse-server
+      container_name: ch-server-1
+      volumes:
+        - ./clickhouse/config.xml:/etc/clickhouse-server/config.d/local.xml
+        - ./clickhouse/macros1.xml:/etc/clickhouse-server/config.d/macros.xml
+      ports:
+        - 8123:8123
+        - 9000:9000
+      environment:
+        TZ: "Asia/Shanghai"
+      depends_on:
+        mysql:
+          condition: service_healthy
+        redis:
+          condition: service_healthy
+        etcd:
+          condition: service_healthy
+        zookeeper:
+          condition: service_healthy
 #  ch-server-2:
 #    image: yandex/clickhouse-server
 #    container_name: ch-server-2
