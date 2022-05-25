@@ -98,6 +98,8 @@ services:
       depends_on:
         mysql:
           condition: service_healthy
+        mongo:
+          condition: service_healthy
         redis:
           condition: service_healthy
         etcd:
@@ -164,6 +166,19 @@ services:
 #        condition: service_healthy
 #      zookeeper:
 #        condition: service_healthy
+  mongo:
+    image: mongo:4.4
+    container_name: mongo
+    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30001"]
+      # volumes:
+    # - ./data/mongo-1:/data/db
+    ports:
+      - "30001:30001"
+    healthcheck:
+      #      test: ["CMD", "ps -ef | grep 30001"]
+      test: test $$(echo "rs.initiate({_id:'my-replica-set',members:[{_id:0,host:\"mongo:30001\"}]}).ok || rs.status().ok" | mongo --port 30001 --quiet) -eq 1
+      interval: 40s
+      start_period: 60s
 #  mongo1:
 #    image: mongo:4.4
 #    container_name: mongo1

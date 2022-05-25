@@ -456,7 +456,12 @@ func (b *MySQLModel) goTypeToMySQLType(t reflect.Type, db string, length int) (b
 		}
 		return true, "bigint unsigned", nil
 	}
-
+	if strings.Contains(t.Name(), "bit") {
+		if length != 0 {
+			return true, "bigint(" + strconv.Itoa(length) + ")", nil
+		}
+		return true, "bigint", nil
+	}
 	if strings.Contains(t.Name(), "int") {
 		if length != 0 {
 			return true, "bigint(" + strconv.Itoa(length) + ")", nil

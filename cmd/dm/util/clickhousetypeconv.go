@@ -37,7 +37,7 @@ func getDefaultValue(name2Type map[string]string) map[string]interface{} {
 	for k, v := range name2Type {
 		v := strings.ToLower(v)
 		switch {
-		case strings.Contains(v, "int") || strings.Contains(v, "bool"):
+		case strings.Contains(v, "int") || strings.Contains(v, "bool") || strings.Contains(v, "bit"):
 			result[k] = 0
 		case strings.Contains(v, "string"):
 			result[k] = ""

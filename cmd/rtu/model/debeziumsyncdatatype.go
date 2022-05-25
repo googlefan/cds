@@ -34,6 +34,9 @@ var NullValMap = map[DataType]interface{}{
 // ParseTypeByMysqlType 将MySQL的数据类型转换为Go语言内部转换用的DataType
 func ParseTypeByMysqlType(sqlType string) DataType {
 	sqlType = strings.ToLower(sqlType)
+	if strings.Contains(sqlType, "bit") {
+		return DataTypeInt
+	}
 	if strings.Contains(sqlType, "int") {
 		return DataTypeInt
 	}
@@ -49,7 +52,7 @@ func ParseTypeByMysqlType(sqlType string) DataType {
 // ParseTypeByCkType 解析类型到ch的类型
 func ParseTypeByCkType(ckType string) DataType {
 	s := strings.ToLower(ckType)
-	if strings.Contains(s, "int") || strings.Contains(s, "boolean") {
+	if strings.Contains(s, "int") || strings.Contains(s, "boolean") || strings.Contains(s, "bit") {
 		return DataTypeInt
 	}
 	if strings.Contains(s, "float") || strings.Contains(s, "decimal") {

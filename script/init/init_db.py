@@ -9,11 +9,11 @@ import datetime
 
 def init_mysql():
     conn = pymysql.connect(
-            host="localhost",
-            user="root",
-            password="root",
-            port=3307,
-            )
+        host="localhost",
+        user="root",
+        password="root",
+        port=3307,
+    )
     cur = conn.cursor()
     cur.execute("create database if not exists galaxy")
     cur.execute("create database if not exists test_mysql")
@@ -34,12 +34,12 @@ def init_mysql():
     insert_sql = "insert into `test_mysql`.`example_mysql` (`float`, `varchar`, datetime) values (%s, %s, %s)"
     for i in range(1, 100001):
         result.append(
-                (
-                    random.random(),
-                    "".join(random.choices(string.ascii_letters+string.digits, k=30)),
-                    datetime.datetime.now()
-                    )
-                )
+            (
+                random.random(),
+                "".join(random.choices(string.ascii_letters + string.digits, k=30)),
+                datetime.datetime.now()
+            )
+        )
         if len(result) % 10000 == 0:
             print("mysql `test_mysql`.`example` inserted 10000 lines")
 
@@ -50,26 +50,26 @@ def init_mysql():
     print("mysql `test_mysql`.`example` insert end")
 
 def init_mongo():
-    cli = pymongo.MongoClient(host="localhost")
+    cli = pymongo.MongoClient(host="localhost", port=30001)
     db = cli["test_mongo"]
     collection = db["example"]
     result = []
 
     for i in range(1, 100001):
         result.append(
-                {
-                    "float": random.random(), 
-                    "string": "".join(random.choices(string.ascii_letters+string.digits, k=30)),
-                    "dt": datetime.datetime.now()
-                    }
-                )
+            {
+                "float": random.random(),
+                "string": "".join(random.choices(string.ascii_letters + string.digits, k=30)),
+                "dt": datetime.datetime.now()
+            }
+        )
         if len(result) % 10000 == 0:
             print("mongodb `test_mongo`.`example` inserted 10000 lines")
 
             collection.insert_many(result)
             result = []
 
+
 if __name__ == "__main__":
     init_mysql()
-    # init_mongo()
-    
+    init_mongo()
