@@ -23,22 +23,25 @@ type (
 	}
 )
 
-func (cgo *CkGroupOperator) MysqlBatchInsert(insertData [][]interface{}, insertQuery string, arr []util.DataType, indexOfFlag, indexOfInsertID, indexOfPrimKey int) error {
+func (cgo *CkGroupOperator) MysqlBatchInsert(insertData [][]interface{}, insertQuery string, arr []util.DataType, indexOfPrimKey int) error {
 	data := make([][]interface{}, len(insertData))
 	for k, v := range insertData {
 		var tempData []interface{}
 		for key, val := range v {
-			if key == indexOfInsertID || key == indexOfFlag {
-				tempData = append(tempData, val)
-				continue
-			}
 			inter, err := util.ParseValueByType(func() interface{} {
 				if uar, ok := val.(time.Time); ok {
 					return uar.In(ShangHaiLocation).Format("2006-01-02 15:04:05")
 				} else if uar, ok := val.([]uint8); ok {
-					return string(uar)
+					b := string(uar)
+					switch b {
+					case "\x00":
+						return 0
+					case "\x01":
+						return 1
+					default:
+						return b
+					}
 				}
-
 				return val
 			}(), arr[key])
 			if err != nil {

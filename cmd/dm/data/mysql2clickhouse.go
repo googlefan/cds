@@ -38,7 +38,7 @@ func (mc *Mysql2ClickHouse) MysqlInertIntoClickHouse(job *config.Job) (string, e
 	tc := util.NewMysqlTypeConvModel(mc.mysqlConn)
 	typeMap, pks := tc.ObtainMysqlTypeMap(job.Source.Table)
 
-	selectPreSQL, sqlForInsert, indexOfFlag, indexOfInsertID, indexOfPrimKey := combineSQL(ckMap, job.Source.Table, job.Target.Table, job.Target.DB, pks, 20000)
+	selectPreSQL, sqlForInsert, indexOfPrimKey := combineSQL(ckMap, job.Source.Table, job.Target.Table, job.Target.DB, pks, 20000)
 
 	var typeArr []util.DataType
 	kt := make([]string, 0, len(ckMap))
@@ -47,14 +47,7 @@ func (mc *Mysql2ClickHouse) MysqlInertIntoClickHouse(job *config.Job) (string, e
 	}
 	sort.Strings(kt)
 	for i := 0; i < len(kt); i++ {
-		switch kt[i] {
-		case "insert_id":
-			typeArr = append(typeArr, util.DataTypeInt)
-		case "ck_is_delete":
-			typeArr = append(typeArr, util.DataTypeInt)
-		default:
-			typeArr = append(typeArr, typeMap[kt[i]])
-		}
+		typeArr = append(typeArr, typeMap[kt[i]])
 	}
 	first := true
 	pksToSql := make([]string, 0, len(pks))
@@ -94,7 +87,7 @@ func (mc *Mysql2ClickHouse) MysqlInertIntoClickHouse(job *config.Job) (string, e
 			return "", err
 		}
 		for rows.Next() {
-			err := formatToInsert(rows, ckMap, indexOfFlag, indexOfInsertID, &insertData)
+			err := formatToInsert(rows, ckMap, &insertData)
 			if err != nil {
 				return "stopped", nil
 			}
@@ -107,7 +100,7 @@ func (mc *Mysql2ClickHouse) MysqlInertIntoClickHouse(job *config.Job) (string, e
 			logx.Info("Task ID:" + job.ID + " has been stopped manually")
 			return "stopped", nil
 		default:
-			err = (*mc.chOperator).MysqlBatchInsert(insertData, sqlForInsert, typeArr, indexOfFlag, indexOfInsertID, indexs)
+			err = (*mc.chOperator).MysqlBatchInsert(insertData, sqlForInsert, typeArr, indexs)
 			if err != nil {
 				logx.Error(err)
 				return "", err
@@ -118,9 +111,8 @@ func (mc *Mysql2ClickHouse) MysqlInertIntoClickHouse(job *config.Job) (string, e
 	return "", nil
 }
 
-func formatToInsert(rows *sql.Rows, ckMap map[string]string, indexOfFlag, indexOfInsertID int, insertData *[][]interface{}) error {
-	//countOfColumn := len(ckMap) - 2 //  字段数量为Ck字段数减2 (flag和insert_id)
-	countOfColumn := len(ckMap) //  字段数量为Ck字段数减2 (flag和insert_id)
+func formatToInsert(rows *sql.Rows, ckMap map[string]string, insertData *[][]interface{}) error {
+	countOfColumn := len(ckMap)
 	temp := make([]interface{}, countOfColumn)
 	tempPointer := make([]interface{}, countOfColumn)
 	for i := 0; i < countOfColumn; i++ {
@@ -131,20 +123,13 @@ func formatToInsert(rows *sql.Rows, ckMap map[string]string, indexOfFlag, indexO
 		logx.Error(err)
 		return err
 	}
-	// 先填 Flag Insert_ID 进去 然后把Mysql的数据再塞进去
-	allData, err := combineMyData(temp)
-	if err != nil {
-		logx.Error(err)
-		return err
-	}
-	*insertData = append(*insertData, allData)
+	*insertData = append(*insertData, temp)
 	return nil
 }
 
 // This func create the sql which 1.get data from mysql 2.insert data to clickhouse
-func combineSQL(ckTypeMap map[string]string, sourceTable, targetTable, targetDB string, pks map[string]int, batchCnt int) (string, string, int, int, map[string]int) {
+func combineSQL(ckTypeMap map[string]string, sourceTable, targetTable, targetDB string, pks map[string]int, batchCnt int) (string, string, map[string]int) {
 	var selectSqlBuilder, insertSqlBuilder strings.Builder
-	indexOfFlag, indexOfInertID := -1, -1
 	// prepare the query
 	selectSqlBuilder.WriteString("SELECT ")
 	insertSqlBuilder.WriteString("INSERT INTO " + targetDB + "." + targetTable + " (")
@@ -162,14 +147,7 @@ func combineSQL(ckTypeMap map[string]string, sourceTable, targetTable, targetDB 
 			// pksIndex = append(pksIndex, i)
 			pksIndex[kt[i]] = i
 		}
-		switch {
-		case kt[i] != "ck_is_delete" && kt[i] != "insert_id":
-			ar = append(ar, kt[i])
-		case kt[i] == "ck_is_delete":
-			indexOfFlag = i
-		case kt[i] == "insert_id":
-			indexOfInertID = i
-		}
+		ar = append(ar, kt[i])
 		des = append(des, kt[i])
 	}
 	for i := 0; i < len(ar); i++ {
@@ -190,7 +168,7 @@ func combineSQL(ckTypeMap map[string]string, sourceTable, targetTable, targetDB 
 	selectSqlBuilder.WriteString(" %s limit ")
 	selectSqlBuilder.WriteString(strconv.Itoa(batchCnt))
 	insertSqlBuilder.WriteString(") VALUES (" + suffix + ")")
-	return selectSqlBuilder.String(), insertSqlBuilder.String(), indexOfFlag, indexOfInertID, pksIndex
+	return selectSqlBuilder.String(), insertSqlBuilder.String(), pksIndex
 }
 
 func combineData(data []interface{}, indexOfFlag, indexOfInsertID int) ([]interface{}, error) {
