@@ -99,7 +99,8 @@ func (mysql *CanalMysql) setValueMap(vm ValueMap, table *SQLTable, isDelete bool
 			case DataTypeFloat:
 				switch val := v.(type) {
 				case nil:
-					vm[k] = float64(0)
+					//vm[k] = float64(0)
+					vm[k] = nil
 				case string:
 					tmp, err := strconv.ParseFloat(val, 64)
 					if err != nil {
@@ -123,7 +124,8 @@ func (mysql *CanalMysql) setValueMap(vm ValueMap, table *SQLTable, isDelete bool
 			case DataTypeInt:
 				switch val := v.(type) {
 				case nil:
-					vm[k] = 0
+					vm[k] = nil
+					//vm[k] = 0
 				case float64:
 					vm[k] = int(val)
 				case string:
@@ -137,7 +139,8 @@ func (mysql *CanalMysql) setValueMap(vm ValueMap, table *SQLTable, isDelete bool
 				}
 			case DataTypeString:
 				if v == nil {
-					vm[k] = ""
+					//vm[k] = ""
+					vm[k] = nil
 					continue
 				}
 				if val, ok := v.(string); ok {

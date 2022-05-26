@@ -33,13 +33,16 @@ func NewRtuAddLogic(ctx context.Context, svcCtx *svc.ServiceContext) RtuAddLogic
 
 func (l *RtuAddLogic) RtuAdd(req types.RtuModel) (*types.RtuModel, error) {
 	sourceType := "canal-" + config.TYPE_MYSQL
+	if len(req.Source.QueryKey) == 0 {
+		req.Source.QueryKey = req.Source.SelectedTable
+	}
 	if strings.HasPrefix(req.Source.Dsn, "mongodb://") {
 		req.Source.QueryKey = []string{"_id"}
-
 		sourceType = "connector-" + config.TYPE_MONGODB
-	} else {
-		req.Source.QueryKey = []string{""}
 	}
+	//else {
+	//	req.Source.QueryKey = []string{""}
+	//}
 	shards, e := json.Marshal(l.svcCtx.Config.CkDataNodes[1:])
 	if e != nil {
 		logx.Error(e)
